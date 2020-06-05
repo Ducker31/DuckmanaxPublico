@@ -7,10 +7,22 @@ from bs4 import BeautifulSoup
 import requests
 import asyncio
 
-bot = commands.Bot(command_prefix='-', description= "Este es un DuckBot")
+bot = commands.Bot(command_prefix='-', description= "Este es un DuckBot, al servicio del gremio")
 
 sourceLinkAlmanax = 'http://www.krosmoz.com/es/almanax'
 horaServidor = 22
+
+@bot.command()
+async def ayuda(ctx):
+	print ("Enviado ayuda solicitada")
+
+	mensaje = discord.Embed(title = "`Resiste, los patos van a tu rescate`", color=0xe5be01)
+	mensaje.add_field(name="Buscar en los dias de almanax: ", value="-balmanax ObjetoBuscar(Puede ser una cosa, zona etc, solo 1 palabra.)", inline=False)
+	mensaje.add_field(name="Almanax actual: ", value="-almanax", inline=False)
+	mensaje.add_field(name="Almanax actualizado diario: ", value="Se envia puntualmente, automaticamente sin comandos.", inline=False)
+	await ctx.send(embed = mensaje)
+
+	print("Envio de ayuda finalizada")
 
 @bot.command()
 async def almanax(ctx):
@@ -39,7 +51,7 @@ async def almanax(ctx):
 	print("Almanax enviado")
 
 @bot.command()
-async def salmanax(ctx, busqueda: str):
+async def balmanax(ctx, busqueda: str):
 	print("Procesando busqueda de almanax")
 	fecha = datetime.datetime.now()
 	año = fecha.year
@@ -87,7 +99,7 @@ async def on_message(ctx):
 @bot.event
 async def on_ready():
 	print("Bot listo")
-	await bot.change_presence(activity=discord.Streaming(name="-almanax",url="https://www.twitch.tv/kerdrai"))
+	await bot.change_presence(activity=discord.Streaming(name="-ayuda",url="twitchurl"))
 
 	while 1:
 
@@ -123,9 +135,10 @@ async def on_ready():
 			mensaje.add_field(name="Mision: ", value=f"{mision}", inline=False)
 			mensaje.add_field(name="Bonus: ", value=f"{bonus.strip()}", inline=False)
 			mensaje.add_field(name="Ofrenda: ", value=f"{ofrenda.strip()}", inline=False)
+			mensaje.add_field(name="Vuela entre las nubes despidiéndose: ", value="Que tengan un patastico dia @everyone", inline=False)
 			mensaje.set_image(url=linkImagen)
 
-			channel = bot.get_channel('channelId')
+			channel = bot.get_channel(IdChannel)
 			await channel.send(embed = mensaje)
 
 			print("Almanax automatico enviado")
