@@ -35,6 +35,7 @@ async def almanax(ctx):
 	mision = soup.find('div', class_='mid').p.text
 	bonus = soup.find('div', class_='more').getText()
 	ofrenda = soup.find('div', class_='more-infos-content').p.text
+	mision = mision.replace("Misión: ", "")
 	bonus = bonus.replace(mision, "")
 	bonus = bonus.replace(ofrenda, "")
 	linkImagen = soup.find('div', {"class": "more-infos"}).img['src']
@@ -125,6 +126,7 @@ async def on_ready():
 			mision = soup.find('div', class_='mid').p.text
 			bonus = soup.find('div', class_='more').getText()
 			ofrenda = soup.find('div', class_='more-infos-content').p.text
+			mision = mision.replace("Misión: ", "")
 			bonus = bonus.replace(mision, "")
 			bonus = bonus.replace(ofrenda, "")
 			linkImagen = soup.find('div', {"class": "more-infos"}).img['src']
