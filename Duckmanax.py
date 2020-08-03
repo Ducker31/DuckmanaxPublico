@@ -11,6 +11,7 @@ bot = commands.Bot(command_prefix='-', description= "Este es un DuckBot, al serv
 
 sourceLinkAlmanax = 'http://www.krosmoz.com/es/almanax'
 horaServidor = 22
+minServidor = 10
 
 @bot.command()
 async def ayuda(ctx):
@@ -29,16 +30,18 @@ async def almanax(ctx):
 	print("Procesando almanax")
 
 	source = requests.get(sourceLinkAlmanax).text
-
 	soup = BeautifulSoup(source, 'lxml')
 
 	mision = soup.find('div', class_='mid').p.text
 	bonus = soup.find('div', class_='more').getText()
 	ofrenda = soup.find('div', class_='more-infos-content').p.text
-	mision = mision.replace("Misión: ", "")
+	linkImagen = soup.find('div', {"class": "more-infos"}).img['src']
+
+	mision = mision.replace("Misión:", "")
 	bonus = bonus.replace(mision, "")
 	bonus = bonus.replace(ofrenda, "")
-	linkImagen = soup.find('div', {"class": "more-infos"}).img['src']
+	bonus = bonus.replace("Misión:", "")
+
 
 	fechaexacta = '{0:%d-%m-%Y}'.format(datetime.datetime.now())
 
@@ -58,6 +61,7 @@ async def balmanax(ctx, busqueda: str):
 	año = fecha.year
 	smes = fecha.month
 	sdia = fecha.day
+	lp1 = len(busqueda)
 
 	for mes in range (smes,13):
 
@@ -80,16 +84,20 @@ async def balmanax(ctx, busqueda: str):
 			link = "http://www.krosmoz.com/es/almanax/" + str(año) + "-" + str(mes2) + "-" + str(dia2)
 
 			try:
-				data = urllib.request.urlopen(link).read().decode('utf-8')
+				data = requests.get(link).text
+				soup = BeautifulSoup(data, 'lxml')
+				datos = (soup.find('div', class_='mid').p.text) + soup.find('div', class_='more').getText()
 			except Exception as error:
 				pass
 
-			for linea in data.split("/n"):
+			for linea in data.split(" "):
+				lp2 = len(linea)
 				try:
-					if re.findall(busqueda, linea, re.IGNORECASE):
+					if re.findall(busqueda, linea, re.IGNORECASE) and (lp2 <= lp1 + 2):
 						await ctx.send("Encontre esta coincidencia de " + busqueda + " : " + link)
 				except Exception as error2:
 					pass
+	await ctx.send("Busqueda finalizada de " + busqueda)
 	print("Busqueda de almanax finalizada")
 
 @bot.event
@@ -100,7 +108,7 @@ async def on_message(ctx):
 @bot.event
 async def on_ready():
 	print("Bot listo")
-	await bot.change_presence(activity=discord.Streaming(name="-ayuda",url="twitchurl"))
+	await bot.change_presence(activity=discord.Streaming(name="-ayuda",url="URL TWICH"))
 
 	while 1:
 
@@ -113,7 +121,7 @@ async def on_ready():
 		print("Hora actual:", fechaDailyAlmanax.hour, ":", fechaDailyAlmanax.minute, " Token OE: ", flagOE)
 		info.close()
 
-		if fechaDailyAlmanax.hour >= horaServidor and fechaDailyAlmanax.minute >= 1 and flagOE == 0:
+		if fechaDailyAlmanax.hour >= horaServidor and fechaDailyAlmanax.minute >= 1 and fechaDailyAlmanax.minute <= minServidor and flagOE == 0:
 			info = open ('info.txt','w')
 			info.write("1")
 			info.close()
@@ -126,10 +134,12 @@ async def on_ready():
 			mision = soup.find('div', class_='mid').p.text
 			bonus = soup.find('div', class_='more').getText()
 			ofrenda = soup.find('div', class_='more-infos-content').p.text
-			mision = mision.replace("Misión: ", "")
+			linkImagen = soup.find('div', {"class": "more-infos"}).img['src']
+
+			mision = mision.replace("Misión:", "")
 			bonus = bonus.replace(mision, "")
 			bonus = bonus.replace(ofrenda, "")
-			linkImagen = soup.find('div', {"class": "more-infos"}).img['src']
+			bonus = bonus.replace("Misión:", "")
 
 			fechaexacta = '{0:%d-%m-%Y}'.format(datetime.datetime.now())
 
@@ -140,7 +150,7 @@ async def on_ready():
 			mensaje.add_field(name="Vuela entre las nubes despidiéndose: ", value="Que tengan un patastico dia @everyone", inline=False)
 			mensaje.set_image(url=linkImagen)
 
-			channel = bot.get_channel(IdChannel)
+			channel = bot.get_channel("TokenId")
 			await channel.send(embed = mensaje)
 
 			print("Almanax automatico enviado")
