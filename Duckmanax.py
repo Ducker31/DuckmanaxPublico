@@ -95,6 +95,7 @@ async def balmanax(ctx, busqueda: str):
 				try:
 					if re.findall(busqueda, linea, re.IGNORECASE) and (lp2 <= lp1 + 2):
 						await ctx.send("Encontre esta coincidencia de " + busqueda + " : " + link)
+						break
 				except Exception as error2:
 					pass
 	await ctx.send("Busqueda finalizada de " + busqueda)
@@ -108,7 +109,7 @@ async def on_message(ctx):
 @bot.event
 async def on_ready():
 	print("Bot listo")
-	await bot.change_presence(activity=discord.Streaming(name="-ayuda",url="URL TWICH"))
+	await bot.change_presence(activity=discord.Streaming(name="-ayuda",url="TwitchUrl"))
 
 	while 1:
 
@@ -150,7 +151,7 @@ async def on_ready():
 			mensaje.add_field(name="Vuela entre las nubes despidiéndose: ", value="Que tengan un patastico dia @everyone", inline=False)
 			mensaje.set_image(url=linkImagen)
 
-			channel = bot.get_channel("TokenId")
+			channel = bot.get_channel("IdChannel")
 			await channel.send(embed = mensaje)
 
 			print("Almanax automatico enviado")
