@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import requests
 import asyncio
 
+client = discord.Client(intents=discord.Intents.default())
 bot = commands.Bot(command_prefix='-', description= "Este es un DuckBot, al servicio del gremio")
 
 sourceLinkAlmanax = 'http://www.krosmoz.com/es/almanax'
